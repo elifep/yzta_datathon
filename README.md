@@ -6,7 +6,7 @@ Problem yapısı bir **regresyon problemidir** ve amaç, her birey için 0 ile 1
 
 ---
 
-## Public Leaderboard Skoru | Best Submission 2
+## Public Leaderboard Skoru 
 
 Bu repository, tarafımdan üretilen en iyi submission olan **CatBoost Seed Blend** çözümünü içermektedir.
 
@@ -62,29 +62,27 @@ yzta_datathon/
 ```
 
 ## Dosya Açıklamaları
-```text
-data/train.csv
-```
+
+`data/train.csv`
+
 Modelin eğitildiği ana veri setidir.
 
 Bu dosyada hem özellik sütunları hem de tahmin edilmesi gereken hedef değişken bulunur.
 
 Hedef değişken:
-```text
-bilissel_performans_skoru
-```
+
+`bilissel_performans_skoru`
+
 Bu dosya modelin verilerden ilişki öğrenmesi için kullanılır.  
 
-```text
-data/test_x.csv
-```
+
+`data/test_x.csv`
 Modelin tahmin üretmesi gereken test veri setidir.
 
 Bu dosyada hedef değişken bulunmaz. Eğitim sonrası model bu dosyadaki her satır için bilissel_performans_skoru tahmini üretir.  
 
-```text
-data/sample_submission.csv
-```
+`data/sample_submission.csv`
+
 Yarışma sisteminin beklediği submission formatını gösteren örnek dosyadır.
 
 Beklenen format:
@@ -104,12 +102,12 @@ Bu dosya, veri keşfi ve görsel analizler için kullanılmak üzere projeye ekl
 
 Notebook içerisinde yapılabilecek analizler:
 
-Veri boyutu inceleme
-Eksik değer analizi
-Hedef değişken dağılımı
-Korelasyon analizi
-Kategorik değişken dağılımları
-Train-test kategori karşılaştırması
+- Veri boyutu inceleme
+- Eksik değer analizi
+- Hedef değişken dağılımı
+- Korelasyon analizi
+- Kategorik değişken dağılımları
+- Train-test kategori karşılaştırması
 
 Not: Ana EDA süreci ayrıca src/01_eda.py dosyasında script formatında da yer almaktadır.
 
@@ -122,17 +120,17 @@ EDA aşamasında veri seti modelleme öncesinde incelenmiş ve temel veri kalite
 
 Bu dosyada yapılan işlemler:
 
-Train ve test veri boyutlarının kontrolü
-Sütun isimlerinin incelenmesi
-Hedef değişkenin temel istatistiklerinin çıkarılması
-Eksik değer analizi
-Sayısal ve kategorik değişkenlerin ayrıştırılması
-Duplicate kayıt kontrolü
-Kategorik değişken dağılımlarının incelenmesi
-IQR yöntemi ile outlier kontrolü
-Sayısal değişkenlerin hedef değişkenle korelasyonlarının incelenmesi
-Test setinde train setinde bulunmayan kategori olup olmadığının kontrol edilmesi
-Hedef değişkenin çarpıklık değerinin incelenmesi
+- Train ve test veri boyutlarının kontrolü
+- Sütun isimlerinin incelenmesi
+- Hedef değişkenin temel istatistiklerinin çıkarılması
+- Eksik değer analizi
+- Sayısal ve kategorik değişkenlerin ayrıştırılması
+- Duplicate kayıt kontrolü
+- Kategorik değişken dağılımlarının incelenmesi
+- IQR yöntemi ile outlier kontrolü
+- Sayısal değişkenlerin hedef değişkenle korelasyonlarının incelenmesi
+- Test setinde train setinde bulunmayan kategori olup olmadığının kontrol edilmesi
+- Hedef değişkenin çarpıklık değerinin incelenmesi
 
 EDA sonucunda hedef değişkenle en güçlü ilişkili sayısal değişkenlerin özellikle şu sütunlar olduğu gözlemlenmiştir:
 ```text
@@ -150,15 +148,14 @@ src/02_catboost_seed_blend.py
 ```
 Bu dosyada sırasıyla şu işlemler yapılır:
 
-train.csv ve test_x.csv dosyaları okunur.
-Eksik değer temizliği yapılır.
-Yeni özellikler üretilir.
-Kategorik değişkenler için target mean encoding uygulanır.
-Combo featurelar oluşturulur.
-CatBoostRegressor modeli farklı random seed değerleriyle eğitilir.
-Her seed için 5-Fold Cross Validation uygulanır.
-Her seed için ayrı test tahmini üretilir.
-Farklı seed tahminleri ortalanarak final seed blend submission oluşturulur.
+1. `train.csv` ve `test_x.csv` dosyaları okunur.
+2. Eksik değer temizliği yapılır.
+3. Yeni özellikler üretilir.
+4. Kategorik değişkenler için target mean encoding uygulanır.
+5. Combo featurelar oluşturulur.
+6. CatBoostRegressor modeli farklı random seed değerleriyle eğitilir.
+7. Her seed için 5-Fold Cross Validation uygulanır.
+8. Farklı seed tahminleri ortalanarak final submission oluşturulur.
 
 Kullanılan seed değerleri:
 ```text
@@ -170,7 +167,31 @@ submissions/catboost_seed_blend_submission.csv
 ```
 
 ## Submissions Klasörü
-catboost_seed_blend_submission.csv
+### Seed Bazlı Submission Dosyaları
+
+Aşağıdaki dosyalar farklı random seed değerleri ile eğitilen CatBoost modellerinin test tahminlerini içerir:
+
+- `catboost_seed_42_submission.csv`
+- `catboost_seed_2024_submission.csv`
+- `catboost_seed_2025_submission.csv`
+- `catboost_seed_3407_submission.csv`
+- `catboost_seed_777_submission.csv`
+
+Bu dosyalar final blend submission üretiminde kullanılmıştır.
+
+### `seed_blend_results.csv`
+
+Bu dosya her seed için lokal doğrulama sonuçlarını içerir.
+
+| Seed | Mean RMSE | OOF RMSE |
+|---|---:|---:|
+| 2025 | 1.216774 | 1.216795 |
+| 2024 | 1.217031 | 1.217064 |
+| 777 | 1.217316 | 1.217355 |
+| 3407 | 1.217360 | 1.217371 |
+| 42 | 1.217523 | 1.217572 |
+
+### `catboost_seed_blend_submission.csv` 
 
 Final submission dosyasıdır.
 
@@ -186,11 +207,11 @@ Bu projede ana model olarak **CatBoostRegressor** kullanılmıştır.
 
 CatBoost tercih edilme nedenleri:
 
-Kategorik değişkenlerle güçlü çalışması
-Tabular veri problemlerinde başarılı sonuçlar vermesi
-Sayısal ve kategorik değişkenleri birlikte kullanabilmesi
-Eksik ve karma veri yapılarında iyi performans göstermesi
-Regresyon problemleri için güçlü bir baseline sağlaması
+- Kategorik değişkenlerle güçlü çalışması
+- Tabular veri problemlerinde başarılı sonuçlar vermesi
+- Sayısal ve kategorik değişkenleri birlikte kullanabilmesi
+- Eksik ve karma veri yapılarında iyi performans göstermesi
+- Regresyon problemleri için güçlü bir baseline sağlaması
 
 ## Veri Ön İşleme
 
@@ -286,10 +307,10 @@ Bu yöntemde her kategori için eğitim verisindeki ortalama bilissel_performans
 
 Target mean encoding uygulanan sütunlar:
 
-meslek
-ruh_sagligi_durumu
-kronotip
-gun_tipi
+- `meslek`
+- `ruh_sagligi_durumu`
+- `kronotip`
+- `gun_tipi`
 
 Bu yaklaşım, kategorik değişkenlerin hedef değişkenle olan ortalama ilişkisini modele sayısal bir sinyal olarak aktarmayı amaçlar.
 
@@ -319,10 +340,10 @@ Modelleme aşamasında **5-Fold Cross Validation** kullanılmıştır.
 
 Bu yöntemde eğitim verisi 5 parçaya ayrılmıştır. Her adımda:
 
-4 parça eğitim için kullanılır.
-1 parça doğrulama için kullanılır.
-Her fold için RMSE değeri hesaplanır.
-Fold sonuçlarının ortalaması modelin genel başarısı hakkında fikir verir.
+- 4 parça eğitim için kullanılır.
+- 1 parça doğrulama için kullanılır.
+- Her fold için RMSE değeri hesaplanır.
+- Fold sonuçlarının ortalaması modelin genel başarısı hakkında fikir verir.
 
 Bu işlem her random seed için ayrı ayrı tekrarlanmıştır.
 
@@ -340,9 +361,9 @@ Kullanılan seed değerleri:
 ```
 Her seed için:
 
-5-Fold Cross Validation yapılmıştır.
-Test seti için tahmin üretilmiştir.
-Seed bazlı tahmin dosyası kaydedilmiştir.
+- 5-Fold Cross Validation yapılmıştır.
+- Test seti için tahmin üretilmiştir.
+- Seed bazlı tahmin dosyası kaydedilmiştir.
 
 Final aşamada tüm seed tahminleri ortalanmıştır.
 
@@ -372,11 +393,13 @@ python src/02_catboost_seed_blend.py
 
 requirements.txt dosyasında kullanılan temel kütüphaneler:
 
+```txt
 pandas
 numpy
 scikit-learn
 catboost
 matplotlib
+```
 
 ## Deneysel Yaklaşım
 
@@ -384,11 +407,11 @@ Proje sürecinde farklı modelleme ve feature engineering yaklaşımları değer
 
 Denemeler sonucunda:
 
-Basit CatBoost modeli güvenilir bir baseline sağlamıştır.
-LightGBM alternatifi denenmiştir ancak bu veri setinde CatBoost kadar güçlü sonuç vermemiştir.
-Çok agresif target mean ve combo encoding denemeleri bazı lokal validasyon sonuçlarını iyileştirse de public leaderboard üzerinde güvenilir bulunmamıştır.
-Farklı random seed değerleriyle CatBoost modelleri eğitilerek seed blend yaklaşımı denenmiştir.
-Final çözüm olarak CatBoost Seed Blend yaklaşımı seçilmiştir.
+- Basit CatBoost modeli güvenilir bir baseline sağlamıştır.
+- LightGBM alternatifi denenmiştir ancak bu veri setinde CatBoost kadar güçlü sonuç vermemiştir.
+- Çok agresif target mean ve combo encoding denemeleri bazı lokal validasyon sonuçlarını iyileştirse de public leaderboard üzerinde güvenilir bulunmamıştır.
+- Farklı random seed değerleriyle CatBoost modelleri eğitilerek seed blend yaklaşımı denenmiştir.
+- Final çözüm olarak CatBoost Seed Blend yaklaşımı seçilmiştir.
 
 Bu nedenle final dosyasında daha dengeli, açıklanabilir ve yarışma sonucuyla uyumlu bir pipeline kullanılmıştır.
 
@@ -398,15 +421,15 @@ Bu projede bireylerin uyku, stres, fiziksel aktivite ve günlük yaşam değişk
 
 Kullanılan temel teknikler:
 
-Veri keşfi
-Eksik değer temizliği
-Feature engineering
-Target mean encoding
-Combo feature generation
-CatBoost regression
-5-Fold Cross Validation
-Seed blend
-Submission üretimi
+- Veri keşfi
+- Eksik değer temizliği
+- Feature engineering
+- Target mean encoding
+- Combo feature generation
+- CatBoost regression
+- 5-Fold Cross Validation
+- Seed blend
+- Submission üretimi
 
 Final çözüm, CatBoostRegressor tabanlı farklı seed modellerinin tahminlerini ortalayarak oluşturulmuştur.
 
